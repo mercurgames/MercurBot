@@ -1,7 +1,12 @@
 // ganz oben einfügen
-const express = require('express');
+const express = require("express");
 const app = express();
 const port = 3000;
+// ganz oben oder vor client.on(...)
+function zufallAuswahl(liste) {
+  const index = Math.floor(Math.random() * liste.length);
+  return liste[index];
+}
 
 app.get("/", (req, res) => {
   res.send("Bot ist online!");
@@ -11,29 +16,35 @@ app.listen(port, () => {
   console.log(`Webserver läuft auf Port ${port}`);
 });
 
-const { Client, GatewayIntentBits, Partials, MembershipScreeningFieldType } = require('discord.js');
+const {
+  Client,
+  GatewayIntentBits,
+  Partials,
+  MembershipScreeningFieldType,
+} = require("discord.js");
+const { waitForDebugger } = require("inspector");
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMembers
+    GatewayIntentBits.GuildMembers,
   ],
-  partials: [Partials.Message, Partials.Channel, Partials.Reaction]
+  partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
-client.once('ready', () => {
+client.once("ready", () => {
   console.log(`Eingeloggt als ${client.user.tag}`);
 });
 
-client.on('messageCreate', async message => {
+client.on("messageCreate", async (message) => {
   const content = message.content.toLowerCase();
   const ping = `<@${message.author.id}>`;
 
-  console.log('Nachricht empfangen:', message.content);
+  console.log("Nachricht empfangen:", message.content);
   if (message.author.bot) return;
 
-  if (message.content === '!websites') {
+  if (message.content === "!websites") {
     message.channel.send(`
 **Webseiten bei Langeweile**
 - \`discord.com\` - Discord. Chill, chat und vieles Mehr (Spaß auch, oder?)
@@ -46,49 +57,77 @@ more coming soon
 `);
   }
 
-  if (content.includes('hallo') || content.includes('moin')) {
+  if (content.includes("hallo") || content.includes("moin")) {
     message.reply(`Hallo ${ping}!`);
   }
 
-  if (content.includes('guten morgen')) {
+  if (message.content === "leck") {
+    message.reply(`Penis!`);
+  }
+
+  if (content.includes("guten morgen")) {
     message.reply(`Guten Morgen ${ping}!`);
   }
 
-  if (content.includes('guten abend')) {
+  if (content.includes("guten abend")) {
     message.reply(`Guten Abend ${ping}!`);
   }
 
-  if (content.includes('gute nacht')) {
+  if (content.includes("gute nacht")) {
     message.reply(`Gute Nacht ${ping}!`);
   }
 
-  if (content.includes('kacke') || content.includes('scheiße') || content.includes('scheisse')) {
+  if (
+    content.includes("kack") ||
+    content.includes("scheiß") ||
+    content.includes("scheiss") 
+  ) {
     message.reply(`Das ist nicht nett ${ping}!`);
-    message.delete()
+    message.delete();
   }
 
-  //if (content.includes('schwör') || content.includes("swear")) {
-   // member.timeout(60 * 60 * 1000, 'Schwören ist nd erlaubt')
- // }
+  if (content.includes('schwör') || content.includes("swear") || content.includes("schwoer")) {
+   //member.timeout(60 * 60 * 1000, 'Schwören ist nd erlaubt')
+    message.reply('<@&1375861670584258582> <@&1375898789323477032> <@&1375861592444633179> <@&1375861405818949723>'); 
+   }
 
-  if (content.includes('guten tag')) {
+  if (message.content === "!giveawayRobux12345") {
+    message.channel.send("Der Preis ist nicht höher als 20 Robux")
+  }
+
+  if (message.content === "!skibidi") {
+    message.channel.send("/play skibidi toilet")
+  }
+
+  if (content.includes("guten tag")) {
     message.reply(`Guten Tag ${ping}!`);
   }
-  
-  if (message.content.startsWith('!sag ')) {
+
+  if (message.content.startsWith("!sag ")) {
     const text = message.content.slice(5); // alles nach "!sag "
     message.channel.send(text);
   }
 
-  if (message.content === '!ping') {
-    message.channel.send('Pong!');
+  if (message.content.startsWith("!anoSag ")) {
+    const text = message.content.slice(8); // a
+    message.delete();
+    message.channel.send(text);
+    
   }
 
-  if (message.content === '!wasgeht') {
-    message.channel.send('Nichts');
+  if (content.includes("braver bot")) {
+    message.reply("Danke! 😊");
   }
 
-  if (message.content === '!help') {
+  if (message.content === "!ping") {
+    message.channel.send("Pong!");
+  }
+
+  if (message.content === "!wasgeht") {
+    message.channel.send("Nichts");
+  }
+
+  if (message.content === "!help") {
     message.channel.send(`
 📋 **Verfügbare Befehle:**
 - \`!wasgeht\` → Sagt "nichts", ist ja nur ein Bot
@@ -100,7 +139,11 @@ more coming soon
 `);
   }
 
-  if (content.includes("lol") || content.includes("lustig") || content.includes("haha")) {
+  if (
+    content.includes("lol") ||
+    content.includes("lustig") ||
+    content.includes("haha")
+  ) {
     try {
       await message.react("😂");
     } catch (error) {
@@ -113,11 +156,13 @@ more coming soon
     if (!message.member) return;
 
     const erlaubteRollen = ["ADMIN", "👑Moderator", "💎Admin", "🔨Owner"];
-    const memberRoles = message.member.roles.cache.map(role => role.name);
-    const isAllowed = erlaubteRollen.some(role => memberRoles.includes(role));
+    const memberRoles = message.member.roles.cache.map((role) => role.name);
+    const isAllowed = erlaubteRollen.some((role) => memberRoles.includes(role));
 
     if (!isAllowed) {
-      return message.channel.send("🚫 Du hast keine Berechtigung für diesen Befehl.");
+      return message.channel.send(
+        "🚫 Du hast keine Berechtigung für diesen Befehl.",
+      );
     }
 
     const args = message.content.split(" ");
@@ -130,7 +175,9 @@ more coming soon
 
     const userIdMatch = mention.match(/^<@!?(\d+)>$/);
     if (!userIdMatch) {
-      return message.channel.send("❌ Bitte @erwähnen Sie den Benutzer richtig.");
+      return message.channel.send(
+        "❌ Bitte @erwähnen Sie den Benutzer richtig.",
+      );
     }
 
     const mentionTag = `<@${userIdMatch[1]}>`;
@@ -138,8 +185,38 @@ more coming soon
 
     for (let i = 0; i < weckCount; i++) {
       await message.channel.send(`${mentionTag} AUFWACHEN! ☀️`);
+      wait(1000); // 1 Sekunde Pause zwischen den Nachrichten
     }
   }
 });
+
+client.on('messageCreate', async message => {
+  if (message.author.bot) return;
+
+  // Beispiel: !clear 5
+  if (message.content.startsWith('!clear')) {
+    // Überprüfen, ob der Benutzer Berechtigung hat
+    if (!message.member.permissions.has('ManageMessages')) {
+      return message.reply('🚫 Du hast keine Berechtigung, Nachrichten zu löschen.');
+    }
+
+    const args = message.content.split(' ');
+    const amount = parseInt(args[1]);
+
+    if (isNaN(amount) || amount < 1 || amount > 100) {
+      return message.reply('❌ Bitte gib eine Zahl zwischen 1 und 100 an. Beispiel: `!clear 10`');
+    }
+
+    try {
+      await message.channel.bulkDelete(amount + 1, true); // +1, um den Befehl selbst auch zu löschen
+      const reply = await message.channel.send(`🧹 ${amount} Nachrichten gelöscht.`);
+      setTimeout(() => reply.delete().catch(() => {}), 3000); // Antwort automatisch löschen nach 3 Sekunden
+    } catch (err) {
+      console.error(err);
+      message.channel.send('❌ Fehler beim Löschen der Nachrichten.');
+    }
+  }
+});
+
 
 client.login(process.env.DISCORD_TOKEN);
