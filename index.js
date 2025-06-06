@@ -186,7 +186,7 @@ more coming soon
 
     for (let i = 0; i < weckCount; i++) {
       await message.channel.send(`${mentionTag} AUFWACHEN! ☀️`);
-      wait(1000); // 1 Sekunde Pause zwischen den Nachrichten
+      //wait(1000); // 1 Sekunde Pause zwischen den Nachrichten
     }
   }
 });
