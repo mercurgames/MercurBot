@@ -1,7 +1,7 @@
 // Erforderliche Pakete
 const express = require("express");
 const { Client, GatewayIntentBits, Partials, REST, Routes, SlashCommandBuilder, PermissionsBitField } = require("discord.js");
-require("dotenv").config();
+
 
 // Webserver für 24/7 Betrieb
 const app = express();
