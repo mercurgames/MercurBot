@@ -136,6 +136,7 @@ more coming soon
 - \`!sag <Text>\` → Wiederholt den Text
 - \`!websites\` → Zeigt Webseiten bei Langeweile
 - \`!weck <@user> <Zahl>\` → Pingt den @user mehrfach (nur mit bestimmter Rolle)
+- \`!clear <Nachrichtenanzahl> ` --> löscht <Nachrichtenanzahl> mal letzte Nachricht
 `);
   }
 
