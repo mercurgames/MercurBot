@@ -37,6 +37,33 @@ client.once("ready", () => {
   console.log(`Eingeloggt als ${client.user.tag}`);
 });
 
+client.on('guildMemberAdd', async member => {
+  setNicknameBasedOnRole(member);
+});
+
+client.on('guildMemberUpdate', async (oldMember, newMember) => {
+  // Nur reagieren, wenn sich Rollen geändert haben
+  if (oldMember.roles.cache.size !== newMember.roles.cache.size) {
+    setNicknameBasedOnRole(newMember);
+  }
+});
+
+async function setNicknameBasedOnRole(member) {
+  const highestRole = member.roles.highest;
+
+  if (highestRole.name === '@everyone') return;
+
+  const newNick = `${highestRole.name} | ${member.user.username}`;
+
+  try {
+    await member.setNickname(newNick);
+    console.log(`Nickname für ${member.user.tag} gesetzt: ${newNick}`);
+  } catch (error) {
+    console.log(`❌ Fehler beim Setzen des Nicknames für ${member.user.tag}:`, error.message);
+  }
+}
+
+
 client.on("messageCreate", async (message) => {
   const content = message.content.toLowerCase();
   const ping = `<@${message.author.id}>`;
