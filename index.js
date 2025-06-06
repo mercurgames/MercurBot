@@ -1,28 +1,15 @@
-// ganz oben einfügen
+// Erforderliche Pakete
 const express = require("express");
+const { Client, GatewayIntentBits, Partials, REST, Routes, SlashCommandBuilder, PermissionsBitField } = require("discord.js");
+require("dotenv").config();
+
+// Webserver für 24/7 Betrieb
 const app = express();
 const port = 3000;
-// ganz oben oder vor client.on(...)
-function zufallAuswahl(liste) {
-  const index = Math.floor(Math.random() * liste.length);
-  return liste[index];
-}
+app.get("/", (req, res) => res.send("Bot ist online!"));
+app.listen(port, () => console.log(`Webserver läuft auf Port ${port}`));
 
-app.get("/", (req, res) => {
-  res.send("Bot ist online!");
-});
-
-app.listen(port, () => {
-  console.log(`Webserver läuft auf Port ${port}`);
-});
-
-const {
-  Client,
-  GatewayIntentBits,
-  Partials,
-  MembershipScreeningFieldType,
-} = require("discord.js");
-const { waitForDebugger } = require("inspector");
+// Discord Bot Client
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -33,222 +20,96 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
-client.once("ready", () => {
-  console.log(`Eingeloggt als ${client.user.tag}`);
-});
+// Slash Commands definieren
+const commands = [
+  new SlashCommandBuilder().setName("ping").setDescription("Antwortet mit Pong!"),
+  new SlashCommandBuilder().setName("sag").setDescription("Bot sagt deinen Text").addStringOption(opt => opt.setName("text").setDescription("Was soll ich sagen?").setRequired(true)),
+  new SlashCommandBuilder().setName("clear").setDescription("Löscht Nachrichten").addIntegerOption(opt => opt.setName("anzahl").setDescription("Anzahl der Nachrichten (1-100)").setRequired(true)),
+  new SlashCommandBuilder().setName("websites").setDescription("Zeigt Webseiten gegen Langeweile"),
+  new SlashCommandBuilder().setName("weck").setDescription("Pingt einen Benutzer mehrfach").addUserOption(opt => opt.setName("user").setDescription("Wen wecken?").setRequired(true)).addIntegerOption(opt => opt.setName("anzahl").setDescription("Wie oft?").setRequired(true)),
+];
 
-client.on('guildMemberAdd', async member => {
-  setNicknameBasedOnRole(member);
-});
-
-client.on('guildMemberUpdate', async (oldMember, newMember) => {
-  // Nur reagieren, wenn sich Rollen geändert haben
-  if (oldMember.roles.cache.size !== newMember.roles.cache.size) {
-    setNicknameBasedOnRole(newMember);
+// Slash Commands registrieren
+const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
+(async () => {
+  try {
+    console.log("🔃 Registriere Slash Commands...");
+    await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: commands });
+    console.log("✅ Slash Commands registriert.");
+  } catch (error) {
+    console.error("Fehler beim Registrieren der Slash Commands:", error);
   }
-});
+})();
 
+// Nickname anpassen, wenn Rolle sich ändert oder neues Mitglied
 async function setNicknameBasedOnRole(member) {
   const highestRole = member.roles.highest;
-
-  if (highestRole.name === '@everyone') return;
-
+  if (highestRole.name === "@everyone") return;
   const newNick = `${highestRole.name} | ${member.user.username}`;
-
   try {
     await member.setNickname(newNick);
-    console.log(`Nickname für ${member.user.tag} gesetzt: ${newNick}`);
+    console.log(`✅ Nickname gesetzt: ${newNick}`);
   } catch (error) {
     console.log(`❌ Fehler beim Setzen des Nicknames für ${member.user.tag}:`, error.message);
   }
 }
 
+client.on("guildMemberAdd", async member => setNicknameBasedOnRole(member));
+client.on("guildMemberUpdate", async (oldMember, newMember) => {
+  if (oldMember.roles.cache.size !== newMember.roles.cache.size) setNicknameBasedOnRole(newMember);
+});
 
-client.on("messageCreate", async (message) => {
-  const content = message.content.toLowerCase();
-  const ping = `<@${message.author.id}>`;
+// Interaktionen
+client.on("interactionCreate", async interaction => {
+  if (!interaction.isChatInputCommand()) return;
 
-  console.log("Nachricht empfangen:", message.content);
-  if (message.author.bot) return;
+  const { commandName } = interaction;
 
-  if (message.content === "!websites") {
-    message.channel.send(`
-**Webseiten bei Langeweile**
-- \`discord.com\` - Discord. Chill, chat und vieles Mehr (Spaß auch, oder?)
-- \`google.com\` - Search something
-- \`poki.com\` - play online games
-- \`slither.io\` - a game (recommended on pc)
-- \`evoworld.io\` - It's nice too (mobile 📱✅)
-
-more coming soon
-`);
+  if (commandName === "ping") {
+    await interaction.reply("Pong!");
   }
 
-  if (content.includes("<@1373628559549272165>")) {
-    message.reply(`Was?`);
-  }
-  
-  if (content.includes("hallo") || content.includes("moin") || content.includes("hello")) {
-    message.reply(`Hallo ${ping}!`);
+  if (commandName === "sag") {
+    const text = interaction.options.getString("text");
+    await interaction.reply(text);
   }
 
-  if (message.content === "leck") {
-    message.reply(`Penis!`);
+  if (commandName === "websites") {
+    await interaction.reply(`**Webseiten bei Langeweile**\n- \`discord.com\`\n- \`google.com\`\n- \`poki.com\`\n- \`slither.io\`\n- \`evoworld.io\`\nMehr bald!`);
   }
 
-  if (content.includes("guten morgen")) {
-    message.reply(`Guten Morgen ${ping}!`);
-  }
+  if (commandName === "weck") {
+    const user = interaction.options.getUser("user");
+    const count = interaction.options.getInteger("anzahl");
 
-  if (content.includes("guten abend")) {
-    message.reply(`Guten Abend ${ping}!`);
-  }
-
-  if (content.includes("gute nacht")) {
-    message.reply(`Gute Nacht ${ping}!`);
-  }
-
-  if (
-    content.includes("kack") ||
-    content.includes("scheiß") ||
-    content.includes("scheiss") 
-  ) {
-    message.reply(`Das ist nicht nett ${ping}!`);
-    message.delete();
-  }
-
-  if (content.includes('schwör') || content.includes("swear") || content.includes("schwoer")) {
-   //member.timeout(60 * 60 * 1000, 'Schwören ist nd erlaubt')
-    message.reply('<@&1375861670584258582> <@&1375898789323477032> <@&1375861592444633179> <@&1375861405818949723>'); 
-   }
-
-  if (message.content === "!giveawayRobux12345") {
-    message.channel.send("Der Preis ist nicht höher als 20 Robux")
-  }
-
-  if (message.content === "!skibidi") {
-    message.channel.send("/play skibidi toilet")
-  }
-
-  if (content.includes("guten tag")) {
-    message.reply(`Guten Tag ${ping}!`);
-  }
-
-  if (message.content.startsWith("!sag ")) {
-    const text = message.content.slice(5); // alles nach "!sag "
-    message.channel.send(text);
-  }
-
-  if (message.content.startsWith("!anoSag ")) {
-    const text = message.content.slice(8); // a
-    message.delete();
-    message.channel.send(text);
-    
-  }
-
-  if (content.includes("braver bot")) {
-    message.reply("Danke! 😊");
-  }
-
-  if (message.content === "!ping") {
-    message.channel.send("Pong!");
-  }
-
-  if (message.content === "!wasgeht") {
-    message.channel.send("Nichts");
-  }
-
-  if (message.content === "!help") {
-    message.channel.send(`
-📋 **Verfügbare Befehle:**
-- \`!wasgeht\` → Sagt "nichts", ist ja nur ein Bot
-- \`!ping\` → Antwortet mit "Pong!"
-- \`!help\` → Zeigt diese Hilfe
-- \`!sag <Text>\` → Wiederholt den Text
-- \`!websites\` → Zeigt Webseiten bei Langeweile
-- \`!weck <@user> <Zahl>\` → Pingt den @user mehrfach (nur mit bestimmter Rolle)
-- \`!clear <Nachrichtenanzahl>\` → löscht <Nachrichtenanzahl> mal letzte Nachricht
-`);
-  }
-
-  if (
-    content.includes("lol") ||
-    content.includes("lustig") ||
-    content.includes("haha")
-  ) {
-    try {
-      await message.react("😂");
-    } catch (error) {
-      console.error("Fehler beim Reagieren:", error);
-    }
-  }
-
-  // !weck-Befehl
-  if (message.content.toLowerCase().startsWith("!weck")) {
-    if (!message.member) return;
-
+    const member = interaction.guild.members.cache.get(interaction.user.id);
     const erlaubteRollen = ["ADMIN", "👑Moderator", "💎Admin", "🔨Owner"];
-    const memberRoles = message.member.roles.cache.map((role) => role.name);
-    const isAllowed = erlaubteRollen.some((role) => memberRoles.includes(role));
+    const hasPermission = member.roles.cache.some(role => erlaubteRollen.includes(role.name));
 
-    if (!isAllowed) {
-      return message.channel.send(
-        "🚫 Du hast keine Berechtigung für diesen Befehl.",
-      );
+    if (!hasPermission) return interaction.reply({ content: "🚫 Keine Berechtigung.", ephemeral: true });
+
+    const clampedCount = Math.min(count, 10);
+    await interaction.reply(`🛎️ Wecke ${user} ${clampedCount} mal...`);
+    for (let i = 0; i < clampedCount; i++) {
+      await interaction.channel.send(`${user} AUFWACHEN! ☀️`);
+    }
+  }
+
+  if (commandName === "clear") {
+    const amount = interaction.options.getInteger("anzahl");
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+      return interaction.reply({ content: "🚫 Keine Berechtigung.", ephemeral: true });
     }
 
-    const args = message.content.split(" ");
-    const mention = args[1];
-    const count = parseInt(args[2]);
-
-    if (!mention || isNaN(count)) {
-      return message.channel.send("❌ Verwendung: `!weck @user 3`");
+    if (amount < 1 || amount > 100) {
+      return interaction.reply("❌ Zahl zwischen 1 und 100 angeben.");
     }
 
-    const userIdMatch = mention.match(/^<@!?(\d+)>$/);
-    if (!userIdMatch) {
-      return message.channel.send(
-        "❌ Bitte @erwähnen Sie den Benutzer richtig.",
-      );
-    }
-
-    const mentionTag = `<@${userIdMatch[1]}>`;
-    const weckCount = Math.min(count, 10);
-
-    for (let i = 0; i < weckCount; i++) {
-      await message.channel.send(`${mentionTag} AUFWACHEN! ☀️`);
-      //wait(1000); // 1 Sekunde Pause zwischen den Nachrichten
-    }
+    const deleted = await interaction.channel.bulkDelete(amount, true);
+    const reply = await interaction.reply({ content: `🧹 ${deleted.size} Nachrichten gelöscht.`, ephemeral: true });
   }
 });
 
-client.on('messageCreate', async message => {
-  if (message.author.bot) return;
-
-  // Beispiel: !clear 5
-  if (message.content.startsWith('!clear')) {
-    // Überprüfen, ob der Benutzer Berechtigung hat
-    if (!message.member.permissions.has('ManageMessages')) {
-      return message.reply('🚫 Du hast keine Berechtigung, Nachrichten zu löschen.');
-    }
-
-    const args = message.content.split(' ');
-    const amount = parseInt(args[1]);
-
-    if (isNaN(amount) || amount < 1 || amount > 100) {
-      return message.reply('❌ Bitte gib eine Zahl zwischen 1 und 100 an. Beispiel: `!clear 10`');
-    }
-
-    try {
-      await message.channel.bulkDelete(amount + 1, true); // +1, um den Befehl selbst auch zu löschen
-      const reply = await message.channel.send(`🧹 ${amount} Nachrichten gelöscht.`);
-      setTimeout(() => reply.delete().catch(() => {}), 3000); // Antwort automatisch löschen nach 3 Sekunden
-    } catch (err) {
-      console.error(err);
-      message.channel.send('❌ Fehler beim Löschen der Nachrichten.');
-    }
-  }
-});
-
-
+// Bot einloggen
+client.once("ready", () => console.log(`✅ Eingeloggt als ${client.user.tag}`));
 client.login(process.env.DISCORD_TOKEN);
