@@ -57,7 +57,7 @@ more coming soon
 `);
   }
 
-  if (content.includes("hallo") || content.includes("moin")) {
+  if (content.includes("hallo") || content.includes("moin") || content.includes("hello")) {
     message.reply(`Hallo ${ping}!`);
   }
 
