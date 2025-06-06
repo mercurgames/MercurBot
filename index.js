@@ -57,7 +57,7 @@ more coming soon
 `);
   }
 
-  if (content.inludes("<@1373628559549272165>")) {
+  if (content.includes("<@1373628559549272165>")) {
     message.reply(`Was?`);
   }
   
