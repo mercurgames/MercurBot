@@ -140,7 +140,7 @@ async function setNicknameBasedOnRole(member) {
     await member.setNickname(newNick);
     console.log(`Nickname für ${member.user.tag} gesetzt: ${newNick}`);
   } catch (error) {
-    console.log(`❌ Fehler beim Setzen des Nicknames für ${member.user.tag}:", error.message);
+    console.log(`❌ Fehler beim Setzen des Nicknames für ${member.user.tag}:`, error.message);
   }
 }
 
