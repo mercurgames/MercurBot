@@ -107,8 +107,23 @@ client.once("ready", async () => {
 });
 
 client.on(Events.GuildMemberAdd, async member => {
+  // Versuche, die Rolle "Member" zu vergeben
+  const role = member.guild.roles.cache.find(r => r.name === "Member");
+  if (role) {
+    try {
+      await member.roles.add(role);
+      console.log(`✅ Rolle "Member" an ${member.user.tag} vergeben.`);
+    } catch (error) {
+      console.error(`❌ Fehler beim Vergeben der Rolle an ${member.user.tag}:`, error.message);
+    }
+  } else {
+    console.warn(`⚠️ Rolle "Member" wurde nicht gefunden.`);
+  }
+
+  // Nickname automatisch setzen
   setNicknameBasedOnRole(member);
 });
+
 
 client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
   if (oldMember.roles.cache.size !== newMember.roles.cache.size) {
