@@ -38,7 +38,6 @@ client.commands = new Collection();
 
 
 
-const { SlashCommandBuilder } = require("discord.js");
 
 client.once("ready", async () => {
   console.log(`✅ Eingeloggt als ${client.user.tag}`);
