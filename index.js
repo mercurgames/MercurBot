@@ -1,15 +1,29 @@
-// Erforderliche Pakete
+// index.js
+require("dotenv").config();
 const express = require("express");
-const { Client, GatewayIntentBits, Partials, REST, Routes, SlashCommandBuilder, PermissionsBitField } = require("discord.js");
-
-
-// Webserver für 24/7 Betrieb
 const app = express();
 const port = 3000;
-app.get("/", (req, res) => res.send("Bot ist online!"));
-app.listen(port, () => console.log(`Webserver läuft auf Port ${port}`));
 
-// Discord Bot Client
+app.get("/", (req, res) => {
+  res.send("Bot ist online!");
+});
+
+app.listen(port, () => {
+  console.log(`Webserver läuft auf Port ${port}`);
+});
+
+const {
+  Client,
+  GatewayIntentBits,
+  Partials,
+  REST,
+  Routes,
+  SlashCommandBuilder,
+  PermissionsBitField,
+  Collection,
+  Events,
+} = require("discord.js");
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -20,47 +34,85 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
-// Slash Commands definieren
-const commands = [
-  new SlashCommandBuilder().setName("ping").setDescription("Antwortet mit Pong!"),
-  new SlashCommandBuilder().setName("sag").setDescription("Bot sagt deinen Text").addStringOption(opt => opt.setName("text").setDescription("Was soll ich sagen?").setRequired(true)),
-  new SlashCommandBuilder().setName("clear").setDescription("Löscht Nachrichten").addIntegerOption(opt => opt.setName("anzahl").setDescription("Anzahl der Nachrichten (1-100)").setRequired(true)),
-  new SlashCommandBuilder().setName("websites").setDescription("Zeigt Webseiten gegen Langeweile"),
-  new SlashCommandBuilder().setName("weck").setDescription("Pingt einen Benutzer mehrfach").addUserOption(opt => opt.setName("user").setDescription("Wen wecken?").setRequired(true)).addIntegerOption(opt => opt.setName("anzahl").setDescription("Wie oft?").setRequired(true)),
-];
+client.commands = new Collection();
 
-// Slash Commands registrieren
+// Slash-Befehle definieren
+const commands = [
+  new SlashCommandBuilder()
+    .setName("ping")
+    .setDescription("Antwortet mit Pong!"),
+
+  new SlashCommandBuilder()
+    .setName("sag")
+    .setDescription("Bot wiederholt deinen Text")
+    .addStringOption(option =>
+      option.setName("text")
+        .setDescription("Der Text, den der Bot sagen soll")
+        .setRequired(true)
+    ),
+
+  new SlashCommandBuilder()
+    .setName("clear")
+    .setDescription("Löscht Nachrichten im Channel")
+    .addIntegerOption(option =>
+      option.setName("anzahl")
+        .setDescription("Anzahl der zu löschenden Nachrichten")
+        .setRequired(true)
+    ),
+
+  new SlashCommandBuilder()
+    .setName("help")
+    .setDescription("Zeigt eine Hilfsübersicht der Befehle."),
+
+  new SlashCommandBuilder()
+    .setName("setnick")
+    .setDescription("Setzt Nickname basierend auf höchster Rolle."),
+].map(command => command.toJSON());
+
+// Slash-Befehle bei Discord registrieren
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
+
 (async () => {
   try {
-    console.log("🔃 Registriere Slash Commands...");
-    await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: commands });
-    console.log("✅ Slash Commands registriert.");
+    console.log("Registriere Slash-Befehle...");
+    await rest.put(
+      Routes.applicationCommands(process.env.CLIENT_ID),
+      { body: commands }
+    );
+    console.log("✅ Slash-Befehle registriert!");
   } catch (error) {
-    console.error("Fehler beim Registrieren der Slash Commands:", error);
+    console.error(error);
   }
 })();
 
-// Nickname anpassen, wenn Rolle sich ändert oder neues Mitglied
+client.once("ready", () => {
+  console.log(`✅ Eingeloggt als ${client.user.tag}`);
+});
+
+client.on(Events.GuildMemberAdd, async member => {
+  setNicknameBasedOnRole(member);
+});
+
+client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
+  if (oldMember.roles.cache.size !== newMember.roles.cache.size) {
+    setNicknameBasedOnRole(newMember);
+  }
+});
+
 async function setNicknameBasedOnRole(member) {
   const highestRole = member.roles.highest;
-  if (highestRole.name === "@everyone") return;
+  if (highestRole.name === '@everyone') return;
+
   const newNick = `${highestRole.name} | ${member.user.username}`;
   try {
     await member.setNickname(newNick);
-    console.log(`✅ Nickname gesetzt: ${newNick}`);
+    console.log(`Nickname für ${member.user.tag} gesetzt: ${newNick}`);
   } catch (error) {
     console.log(`❌ Fehler beim Setzen des Nicknames für ${member.user.tag}:`, error.message);
   }
 }
 
-client.on("guildMemberAdd", async member => setNicknameBasedOnRole(member));
-client.on("guildMemberUpdate", async (oldMember, newMember) => {
-  if (oldMember.roles.cache.size !== newMember.roles.cache.size) setNicknameBasedOnRole(newMember);
-});
-
-// Interaktionen
-client.on("interactionCreate", async interaction => {
+client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   const { commandName } = interaction;
@@ -74,42 +126,42 @@ client.on("interactionCreate", async interaction => {
     await interaction.reply(text);
   }
 
-  if (commandName === "websites") {
-    await interaction.reply(`**Webseiten bei Langeweile**\n- \`discord.com\`\n- \`google.com\`\n- \`poki.com\`\n- \`slither.io\`\n- \`evoworld.io\`\nMehr bald!`);
-  }
-
-  if (commandName === "weck") {
-    const user = interaction.options.getUser("user");
-    const count = interaction.options.getInteger("anzahl");
-
-    const member = interaction.guild.members.cache.get(interaction.user.id);
-    const erlaubteRollen = ["ADMIN", "👑Moderator", "💎Admin", "🔨Owner"];
-    const hasPermission = member.roles.cache.some(role => erlaubteRollen.includes(role.name));
-
-    if (!hasPermission) return interaction.reply({ content: "🚫 Keine Berechtigung.", ephemeral: true });
-
-    const clampedCount = Math.min(count, 10);
-    await interaction.reply(`🛎️ Wecke ${user} ${clampedCount} mal...`);
-    for (let i = 0; i < clampedCount; i++) {
-      await interaction.channel.send(`${user} AUFWACHEN! ☀️`);
-    }
-  }
-
   if (commandName === "clear") {
     const amount = interaction.options.getInteger("anzahl");
+
     if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-      return interaction.reply({ content: "🚫 Keine Berechtigung.", ephemeral: true });
+      return interaction.reply({
+        content: "🚫 Du hast keine Berechtigung, Nachrichten zu löschen.",
+        ephemeral: true,
+      });
     }
 
-    if (amount < 1 || amount > 100) {
-      return interaction.reply("❌ Zahl zwischen 1 und 100 angeben.");
+    try {
+      const messages = await interaction.channel.bulkDelete(amount, true);
+      const reply = await interaction.reply({ content: `🧹 ${messages.size} Nachrichten gelöscht.`, fetchReply: true });
+      setTimeout(() => reply.delete().catch(() => {}), 3000);
+    } catch (err) {
+      console.error(err);
+      interaction.reply("❌ Fehler beim Löschen der Nachrichten.");
     }
+  }
 
-    const deleted = await interaction.channel.bulkDelete(amount, true);
-    const reply = await interaction.reply({ content: `🧹 ${deleted.size} Nachrichten gelöscht.`, ephemeral: true });
+  if (commandName === "help") {
+    await interaction.reply({
+      content: `📋 **Slash-Befehle Übersicht:**\n` +
+               `- \`/ping\` → Antwortet mit "Pong!"\n` +
+               `- \`/sag <text>\` → Wiederholt den Text\n` +
+               `- \`/clear <anzahl>\` → Löscht Nachrichten\n` +
+               `- \`/setnick\` → Nickname anpassen`,
+      ephemeral: true
+    });
+  }
+
+  if (commandName === "setnick") {
+    const member = interaction.member;
+    setNicknameBasedOnRole(member);
+    await interaction.reply({ content: "✅ Nickname gesetzt (sofern erlaubt).", ephemeral: true });
   }
 });
 
-// Bot einloggen
-client.once("ready", () => console.log(`✅ Eingeloggt als ${client.user.tag}`));
 client.login(process.env.DISCORD_TOKEN);
