@@ -94,7 +94,7 @@ client.once("ready", async () => {
   try {
     console.log("📨 Registriere Slash-Commands...");
     await rest.put(
-      Routes.applicationGuildCommands(client.user.id),
+      Routes.applicationCommands(client.user.id),
       { body: commands }
     );
     console.log("✅ Slash-Commands registriert!");
