@@ -36,9 +36,6 @@ const client = new Client({
 
 client.commands = new Collection();
 
-
-
-
 client.once("ready", async () => {
   console.log(`✅ Eingeloggt als ${client.user.tag}`);
 
@@ -67,7 +64,7 @@ client.once("ready", async () => {
           .setDescription("Anzahl der Nachrichten (1-100)")
           .setRequired(true)
       ),
-    
+
     new SlashCommandBuilder()
       .setName("weck")
       .setDescription("Spammt jemanden wach")
@@ -81,12 +78,18 @@ client.once("ready", async () => {
         option
           .setName("anzahl")
           .setDescription("Wie oft?")
+          .setMinValue(1)
+          .setMaxValue(10)
           .setRequired(true)
       ),
 
     new SlashCommandBuilder()
       .setName("websites")
       .setDescription("Zeigt Websites gegen Langeweile"),
+
+    new SlashCommandBuilder()
+      .setName("setnick")
+      .setDescription("Setzt den Nickname basierend auf der höchsten Rolle")
   ].map(cmd => cmd.toJSON());
 
   const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
@@ -102,7 +105,6 @@ client.once("ready", async () => {
     console.error("❌ Fehler beim Registrieren der Slash-Commands:", error);
   }
 });
-
 
 client.on(Events.GuildMemberAdd, async member => {
   setNicknameBasedOnRole(member);
@@ -123,7 +125,7 @@ async function setNicknameBasedOnRole(member) {
     await member.setNickname(newNick);
     console.log(`Nickname für ${member.user.tag} gesetzt: ${newNick}`);
   } catch (error) {
-    console.log(`❌ Fehler beim Setzen des Nicknames für ${member.user.tag}:`, error.message);
+    console.log(`❌ Fehler beim Setzen des Nicknames für ${member.user.tag}:", error.message);
   }
 }
 
@@ -173,9 +175,33 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 
   if (commandName === "setnick") {
+    await interaction.deferReply({ ephemeral: true });
     const member = interaction.member;
     setNicknameBasedOnRole(member);
-    await interaction.reply({ content: "✅ Nickname gesetzt (sofern erlaubt).", ephemeral: true });
+    await interaction.editReply("✅ Nickname gesetzt (sofern erlaubt).");
+  }
+
+  if (commandName === "weck") {
+    await interaction.deferReply();
+    const user = interaction.options.getUser("user");
+    const anzahl = interaction.options.getInteger("anzahl");
+
+    for (let i = 0; i < anzahl; i++) {
+      await interaction.channel.send(`${user} AUFWACHEN! ☀️`);
+    }
+
+    await interaction.editReply(`✅ ${user} wurde ${anzahl} Mal geweckt!`);
+  }
+
+  if (commandName === "websites") {
+    await interaction.reply(`
+**🌐 Webseiten gegen Langeweile**
+- \`discord.com\` – Discord selbst 😄
+- \`google.com\` – Googeln geht immer!
+- \`poki.com\` – Spiele ohne Anmeldung
+- \`slither.io\` – Klassiker
+- \`evoworld.io\` – Mobile Game für zwischendurch
+`);
   }
 });
 
