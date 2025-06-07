@@ -36,58 +36,74 @@ const client = new Client({
 
 client.commands = new Collection();
 
-// Slash-Befehle definieren
-const commands = [
-  new SlashCommandBuilder()
-    .setName("ping")
-    .setDescription("Antwortet mit Pong!"),
 
-  new SlashCommandBuilder()
-    .setName("sag")
-    .setDescription("Bot wiederholt deinen Text")
-    .addStringOption(option =>
-      option.setName("text")
-        .setDescription("Der Text, den der Bot sagen soll")
-        .setRequired(true)
-    ),
 
-  new SlashCommandBuilder()
-    .setName("clear")
-    .setDescription("Löscht Nachrichten im Channel")
-    .addIntegerOption(option =>
-      option.setName("anzahl")
-        .setDescription("Anzahl der zu löschenden Nachrichten")
-        .setRequired(true)
-    ),
+const { REST, Routes, SlashCommandBuilder } = require("discord.js");
 
-  new SlashCommandBuilder()
-    .setName("help")
-    .setDescription("Zeigt eine Hilfsübersicht der Befehle."),
+client.once("ready", async () => {
+  console.log(`✅ Eingeloggt als ${client.user.tag}`);
 
-  new SlashCommandBuilder()
-    .setName("setnick")
-    .setDescription("Setzt Nickname basierend auf höchster Rolle."),
-].map(command => command.toJSON());
+  // Slash-Commands definieren
+  const commands = [
+    new SlashCommandBuilder()
+      .setName("ping")
+      .setDescription("Zeigt Pong!"),
 
-// Slash-Befehle bei Discord registrieren
-const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
+    new SlashCommandBuilder()
+      .setName("sag")
+      .setDescription("Lässt den Bot etwas sagen")
+      .addStringOption(option =>
+        option
+          .setName("text")
+          .setDescription("Was soll der Bot sagen?")
+          .setRequired(true)
+      ),
 
-(async () => {
+    new SlashCommandBuilder()
+      .setName("clear")
+      .setDescription("Löscht Nachrichten")
+      .addIntegerOption(option =>
+        option
+          .setName("anzahl")
+          .setDescription("Anzahl der Nachrichten (1-100)")
+          .setRequired(true)
+      ),
+    
+    new SlashCommandBuilder()
+      .setName("weck")
+      .setDescription("Spammt jemanden wach")
+      .addUserOption(option =>
+        option
+          .setName("user")
+          .setDescription("Wen willst du wecken?")
+          .setRequired(true)
+      )
+      .addIntegerOption(option =>
+        option
+          .setName("anzahl")
+          .setDescription("Wie oft?")
+          .setRequired(true)
+      ),
+
+    new SlashCommandBuilder()
+      .setName("websites")
+      .setDescription("Zeigt Websites gegen Langeweile"),
+  ].map(cmd => cmd.toJSON());
+
+  const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
+
   try {
-    console.log("Registriere Slash-Befehle...");
+    console.log("📨 Registriere Slash-Commands...");
     await rest.put(
-      Routes.applicationCommands(process.env.CLIENT_ID),
+      Routes.applicationCommands(client.user.id),
       { body: commands }
     );
-    console.log("✅ Slash-Befehle registriert!");
+    console.log("✅ Slash-Commands registriert!");
   } catch (error) {
-    console.error(error);
+    console.error("❌ Fehler beim Registrieren der Slash-Commands:", error);
   }
-})();
-
-client.once("ready", () => {
-  console.log(`✅ Eingeloggt als ${client.user.tag}`);
 });
+
 
 client.on(Events.GuildMemberAdd, async member => {
   setNicknameBasedOnRole(member);
