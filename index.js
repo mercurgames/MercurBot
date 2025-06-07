@@ -102,7 +102,7 @@ client.once("ready", async () => {
     );
     console.log("✅ Slash-Commands registriert!");
   } catch (error) {
-    console.error("❌ Fehler beim Registrieren der Slash-Commands:", error);
+    console.error(`❌ Fehler beim Registrieren der Slash-Commands:`, error);
   }
 });
 
