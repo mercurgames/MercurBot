@@ -220,4 +220,59 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 });
 
+client.on("messageCreate", async (message) => {
+  const content = message.content.toLowerCase();
+  const ping = `<@${message.author.id}>`;
+
+  console.log("Nachricht empfangen:", message.content);
+  if (message.author.bot) return;
+
+
+  if (content.includes("hallo") || content.includes("moin") || content.includes("hello")){
+    message.reply(`Hallo ${ping}!`);
+  }
+
+  if (message.content === "leck") {
+    message.reply(`Penis!`);
+  }
+
+  if (content.includes("guten morgen")) {
+    message.reply(`Guten Morgen ${ping}!`);
+  }
+
+  if (content.includes("guten abend")) {
+    message.reply(`Guten Abend ${ping}!`);
+  }
+
+  if (content.includes("gute nacht")) {
+    message.reply(`Gute Nacht ${ping}!`);
+  }
+
+  if (
+    content.includes("kack") ||
+    content.includes("scheiß") ||
+    content.includes("scheiss") 
+  ) {
+    message.reply(`Das ist nicht nett ${ping}!`);
+    message.delete();
+  }
+  if (content.includes("guten tag")) {
+    message.reply(`Guten Tag ${ping}!`);
+  }
+  if (content.includes("braver bot")) {
+    message.reply("Danke! 😊");
+  }
+  if (
+    content.includes("lol") ||
+    content.includes("lustig") ||
+    content.includes("haha")
+  ) {
+    try {
+      await message.react("😂");
+    } catch (error) {
+      console.error("Fehler beim Reagieren:", error);
+    }
+  }
+}
+
 client.login(process.env.DISCORD_TOKEN);
