@@ -257,7 +257,8 @@ client.on("messageCreate", async (message) => {
     content.includes("fuck") 
   ) {
     message.reply(`Das ist nicht nett ${ping}!`);
-    message.delete();
+    setTimeout(() => message.delete(), 1000); // 1 Sekunde Verzögerung
+
   }
   if (content.includes("guten tag")) {
     message.reply(`Guten Tag ${ping}!`);
