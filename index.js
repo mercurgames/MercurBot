@@ -251,7 +251,10 @@ client.on("messageCreate", async (message) => {
   if (
     content.includes("kack") ||
     content.includes("scheiß") ||
-    content.includes("scheiss") 
+    content.includes("scheiss") ||
+    content.includes("kaka") ||
+    content.includes("fick") ||
+    content.includes("fuck") 
   ) {
     message.reply(`Das ist nicht nett ${ping}!`);
     message.delete();
