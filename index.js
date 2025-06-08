@@ -184,7 +184,8 @@ client.on(Events.InteractionCreate, async interaction => {
                `- \`/ping\` → Antwortet mit "Pong!"\n` +
                `- \`/sag <text>\` → Wiederholt den Text\n` +
                `- \`/clear <anzahl>\` → Löscht Nachrichten\n` +
-               `- \`/setnick\` → Nickname anpassen`,
+               `- \`/setnick\` → Nickname anpassen\n` +
+              `Commands gemacht von <@1251600600164991099>\n`,
       ephemeral: true
     });
   }
@@ -257,7 +258,7 @@ client.on("messageCreate", async (message) => {
     content.includes("fuck") 
   ) {
     message.reply(`Das ist nicht nett ${ping}!`);
-    setTimeout(() => message.delete(), 1000); // 1 Sekunde Verzögerung
+    setTimeout(() => message.delete(), 500); // 1 Sekunde Verzögerung
 
   }
   if (content.includes("guten tag")) {
