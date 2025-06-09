@@ -133,7 +133,7 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
 
 async function setNicknameBasedOnRole(member) {
   const highestRole = member.roles.highest;
-  if (highestRole.name === '@everyone' || highestRole.name === 'Member') return;
+  if (highestRole.name === '@everyone' || highestRole.name === 'Member' || highestRole.name === '✅Verified') return;
 
   const newNick = `${highestRole.name} | ${member.user.username}`;
   try {
