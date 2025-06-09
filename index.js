@@ -89,7 +89,7 @@ client.once("ready", async () => {
 
     new SlashCommandBuilder()
       .setName("setnick")
-      .setDescription("Setzt den Nickname basierend auf der höchsten Rolle")
+      .setDescription("Setzt alle Nicknames basierend auf der höchsten Rolle")
   ].map(cmd => cmd.toJSON());
 
   const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
@@ -192,8 +192,13 @@ client.on(Events.InteractionCreate, async interaction => {
 
   if (commandName === "setnick") {
     await interaction.deferReply({ ephemeral: true });
-    const member = interaction.member;
-    setNicknameBasedOnRole(member);
+    client.guilds.cache.forEach(guild => {
+        guild.members.fetch().then(members => {
+            members.forEach(member => {
+                setNicknameBasedOnRole(member);
+            });
+        });
+    });
     await interaction.editReply("✅ Nickname gesetzt (sofern erlaubt).");
   }
 
