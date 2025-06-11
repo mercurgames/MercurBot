@@ -46,9 +46,9 @@ client.once("ready", async () => {
       .setName("ping")
       .setDescription("Zeigt Pong!"),
 
-    new SlashCommandBuilder()
-      .setName("slowcmd")
-      .setDescription("Nur zum Testen"),
+    // new SlashCommandBuilder()
+    //   .setName("slowcmd")
+    //   .setDescription("Nur zum Testen"),
 
     new SlashCommandBuilder()
       .setName("sag")
@@ -172,14 +172,14 @@ client.on(Events.InteractionCreate, async interaction => {
     await interaction.deferReply("Pong!");
   }
 
-  if (commandName === "slowcmd") {
-        await interaction.deferReply(); // Antwort verzögern
+  // if (commandName === "slowcmd") {
+  //       await interaction.deferReply(); // Antwort verzögern
 
-        // Simulierte lange Verarbeitung (z. B. API-Anfrage)
-        await new Promise(resolve => setTimeout(resolve, 5000));
+  //       // Simulierte lange Verarbeitung (z. B. API-Anfrage)
+  //       await new Promise(resolve => setTimeout(resolve, 5000));
 
-        await interaction.editReply("✅ Verarbeitung abgeschlossen!");
-  }
+  //       await interaction.editReply("✅ Verarbeitung abgeschlossen!");
+  // }
 
   if (commandName === "sag") {
     const text = interaction.options.getString("text");
