@@ -155,7 +155,7 @@ client.on(Events.InteractionCreate, async interaction => {
   const { commandName } = interaction;
 
   if (commandName === "ping") {
-    await interaction.reply("Pong!");
+    await interaction.deferReply("Pong!");
   }
 
   if (commandName === "slowcmd") {
@@ -169,14 +169,14 @@ client.on(Events.InteractionCreate, async interaction => {
 
   if (commandName === "sag") {
     const text = interaction.options.getString("text");
-    await interaction.reply(text);
+    await interaction.deferReply(text);
   }
 
   if (commandName === "clear") {
     const amount = interaction.options.getInteger("anzahl");
 
     if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-      return interaction.reply({
+      return interaction.deferReply({
         content: "🚫 Du hast keine Berechtigung, Nachrichten zu löschen.",
         ephemeral: true,
       });
@@ -193,7 +193,7 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 
   if (commandName === "help") {
-    await interaction.reply({
+    await interaction.deferReply({
       content: `📋 **Slash-Befehle Übersicht:**\n` +
                `- \`/ping\` → Antwortet mit "Pong!"\n` +
                `- \`/sag <text>\` → Wiederholt den Text\n` +
@@ -231,7 +231,7 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 
   if (commandName === "websites") {
-    await interaction.reply(`
+    await interaction.deferReply(`
 **🌐 Webseiten gegen Langeweile**
 - \`discord.com\` – Discord selbst 😄
 - \`google.com\` – Googeln geht immer!
