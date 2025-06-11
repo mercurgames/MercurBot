@@ -101,10 +101,10 @@ client.once("ready", async () => {
 
   try {
     console.log("📨 Registriere Slash-Commands...");
-    await rest.put(
-      Routes.applicationCommands(client.user.id),
-      { body: commands }
-    );
+    console.time("Slash-Commands Registrierung");
+    await rest.put(Routes.applicationCommands(client.user.id), { body: commands });
+    console.timeEnd("Slash-Commands Registrierung");
+
     console.log("✅ Slash-Commands registriert!");
   } catch (error) {
     console.error(`❌ Fehler beim Registrieren der Slash-Commands:`, error);
