@@ -138,7 +138,8 @@ client.on(Events.GuildMemberAdd, async member => {
     channel.send({ embeds: [welcomeEmbed] });
   
   // Nickname automatisch setzen
-  setNicknameBasedOnRole(member);
+  setImmediate(() => setNicknameBasedOnRole(member));
+
 });
 
 
