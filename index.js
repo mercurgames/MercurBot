@@ -94,7 +94,7 @@ client.once("ready", async () => {
 
     new SlashCommandBuilder()
       .setName("setnick")
-      .setDescription("Setzt alle Nicknames basierend auf der höchsten Rolle")
+      .setDescription("Setzt dein Nickname basierend auf der höchsten Rolle")
   ].map(cmd => cmd.toJSON());
 
   const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
@@ -219,14 +219,17 @@ client.on(Events.InteractionCreate, async interaction => {
 
   if (commandName === "setnick") {
     await interaction.deferReply({ ephemeral: true });
-    client.guilds.cache.forEach(guild => {
-        guild.members.fetch().then(members => {
-            members.forEach(member => {
-                setNicknameBasedOnRole(member);
-            });
-        });
-    });
-    await interaction.editReply("✅ Nickname gesetzt (sofern erlaubt).");
+
+    const member = interaction.guild.members.cache.get(interaction.user.id); // User abrufen
+    if (!member) return interaction.editReply("❌ Fehler: Benutzer nicht gefunden.");
+
+    try {
+        setNicknameBasedOnRole(member); // Funktion korrekt aufrufen
+        await interaction.editReply("✅ Nickname gesetzt (sofern erlaubt).");
+    } catch (error) {
+        console.error("❌ Fehler beim Ändern des Nicknames:", error);
+        await interaction.editReply("❌ Fehler: Nickname konnte nicht geändert werden.");
+    }
   }
 
   if (commandName === "weck") {
