@@ -158,7 +158,7 @@ client.on(Events.InteractionCreate, async interaction => {
     await interaction.reply("Pong!");
   }
 
-  if (interaction.commandName === "slowcmd") {
+  if (commandName === "slowcmd") {
         await interaction.deferReply(); // Antwort verzögern
 
         // Simulierte lange Verarbeitung (z. B. API-Anfrage)
