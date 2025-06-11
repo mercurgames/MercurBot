@@ -46,6 +46,10 @@ client.once("ready", async () => {
       .setDescription("Zeigt Pong!"),
 
     new SlashCommandBuilder()
+      .setName("slowcmd")
+      .setDescription("Nur zum Testen"),
+
+    new SlashCommandBuilder()
       .setName("sag")
       .setDescription("Lässt den Bot etwas sagen")
       .addStringOption(option =>
