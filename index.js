@@ -22,6 +22,7 @@ const {
   PermissionsBitField,
   Collection,
   Events,
+  EmbedBuilder,
 } = require("discord.js");
 
 const client = new Client({
@@ -125,9 +126,16 @@ client.on(Events.GuildMemberAdd, async member => {
   }
 
   const channel = member.guild.channels.cache.get("1382401900313448449"); // Kanal-ID einfügen
+    const channel = member.guild.channels.cache.get("1382401900313448449");
     if (!channel) return console.error("❌ Fehler: Kanal nicht gefunden.");
 
-    channel.send(`👋 Willkommen, ${member.user}! Schön, dass du da bist! Bitte lese noch mal die Regeln durch`);
+    const welcomeEmbed = new EmbedBuilder()
+        .setColor("#00ff00")
+        .setTitle("Willkommen!")
+        .setDescription(`👋 Hey ${member.user}, willkommen auf unserem Server!`)
+        .setThumbnail(member.user.displayAvatarURL());
+
+    channel.send({ embeds: [welcomeEmbed] });
   
   // Nickname automatisch setzen
   setNicknameBasedOnRole(member);
