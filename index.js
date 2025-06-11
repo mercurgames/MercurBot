@@ -209,7 +209,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     for (let i = 0; i < anzahl; i++) {
       await interaction.channel.send(`${user} AUFWACHEN! ☀️`);
-      setTimeout(() => message.delete(), 500); // 1 Sekunde Verzögerung
+      
 
     }
 
