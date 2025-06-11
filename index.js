@@ -135,19 +135,6 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
   }
 });
 
-client.on("interactionCreate", async interaction => {
-    if (!interaction.isChatInputCommand()) return;
-
-    if (interaction.commandName === "slowcmd") {
-        await interaction.deferReply(); // Antwort verzögern
-
-        // Simulierte lange Verarbeitung (z. B. API-Anfrage)
-        await new Promise(resolve => setTimeout(resolve, 5000));
-
-        await interaction.editReply("✅ Verarbeitung abgeschlossen!");
-    }
-});
-
 
 async function setNicknameBasedOnRole(member) {
   const highestRole = member.roles.highest;
@@ -169,6 +156,15 @@ client.on(Events.InteractionCreate, async interaction => {
 
   if (commandName === "ping") {
     await interaction.reply("Pong!");
+  }
+
+  if (interaction.commandName === "slowcmd") {
+        await interaction.deferReply(); // Antwort verzögern
+
+        // Simulierte lange Verarbeitung (z. B. API-Anfrage)
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
+        await interaction.editReply("✅ Verarbeitung abgeschlossen!");
   }
 
   if (commandName === "sag") {
