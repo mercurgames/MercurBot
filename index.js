@@ -124,6 +124,11 @@ client.on(Events.GuildMemberAdd, async member => {
     console.warn(`⚠️ Rolle "Member" wurde nicht gefunden.`);
   }
 
+  const channel = member.guild.channels.cache.get("1382401900313448449"); // Kanal-ID einfügen
+    if (!channel) return console.error("❌ Fehler: Kanal nicht gefunden.");
+
+    channel.send(`👋 Willkommen, ${member.user}! Schön, dass du da bist! Bitte lese noch mal die Regeln durch`);
+  
   // Nickname automatisch setzen
   setNicknameBasedOnRole(member);
 });
