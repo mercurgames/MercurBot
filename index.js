@@ -223,7 +223,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     for (let i = 0; i < anzahl; i++) {
       await interaction.channel.send(`${user} AUFWACHEN! ☀️`);
-      
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
     }
 
