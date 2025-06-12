@@ -169,7 +169,8 @@ client.on(Events.InteractionCreate, async interaction => {
   const { commandName } = interaction;
 
   if (commandName === "ping") {
-    await interaction.deferReply("Pong!");
+    await interaction.deferReply();
+    await interaction.editReply("Pong!");
   }
 
   // if (commandName === "slowcmd") {
