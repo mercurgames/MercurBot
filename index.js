@@ -276,7 +276,7 @@ client.on("messageCreate", async (message) => {
     message.reply(`Penis!`);
   }
   
-  if (content.includes("<&1373628559549272165>")){
+  if (content.includes("<@1373628559549272165>")){
     message.reply(`Was?`)
   }
 
