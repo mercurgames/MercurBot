@@ -275,6 +275,10 @@ client.on("messageCreate", async (message) => {
   if (message.content === "leck") {
     message.reply(`Penis!`);
   }
+  
+  if (content.includes("<&1373628559549272165>")){
+    message.reply(`Was?`)
+  }
 
   if (content.includes("guten morgen")) {
     message.reply(`Guten Morgen ${ping}!`);
