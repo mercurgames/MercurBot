@@ -111,6 +111,24 @@ client.once("ready", async () => {
   }
 });
 
+client.on(Events.GuildMemberRemove, async member => {
+    const channelIDs = ["1382686427858341898"]; // Liste der IDs
+
+    for (const channelID of channelIDs) {
+        const channel = member.guild.channels.cache.get(channelID);
+        if (!channel) continue; // Falls der Kanal nicht existiert, überspringen
+
+        const goodbyeEmbed = new EmbedBuilder()
+            .setColor("#ff0000")
+            .setTitle("Auf Wiedersehen!")
+            .setDescription(`👋 ${member.user} hat **${member.guild.name}** verlassen.`)
+            .setThumbnail(member.user.displayAvatarURL());
+
+        channel.send({ embeds: [goodbyeEmbed] });
+    }
+});
+
+
 client.on(Events.GuildMemberAdd, async member => {
   // Versuche, die Rolle "Member" zu vergeben
   const role = member.guild.roles.cache.find(r => r.name === "Member");
