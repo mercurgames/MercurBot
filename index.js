@@ -126,16 +126,23 @@ client.on(Events.GuildMemberAdd, async member => {
   }
 
   //const channel = member.guild.channels.cache.get("1382401900313448449"); // Kanal-ID einfügen
-    const channel = member.guild.channels.cache.get("1382401900313448449");
-    if (!channel) return console.error("❌ Fehler: Kanal nicht gefunden.");
+    const channelIDs = ["1382401900313448449", "1381259431555239966", "1375181656993824939", "1383405232461054034"]; // Füge hier weitere Kanal-IDs hinzu
 
-    const welcomeEmbed = new EmbedBuilder()
-        .setColor("#00ff00")
-        .setTitle("Willkommen!")
-        .setDescription(`👋 Hey ${member.user}, willkommen auf unserem Server!`)
-        .setThumbnail(member.user.displayAvatarURL());
+    for (const channelID of channelIDs) {
+        const channel = member.guild.channels.cache.get(channelID);
+        if (!channel) {
+            console.error(`❌ Fehler: Kanal mit ID ${channelID} nicht gefunden.`);
+            continue;
+        }
 
-    channel.send({ embeds: [welcomeEmbed] });
+        const welcomeEmbed = new EmbedBuilder()
+            .setColor("#00ff00")
+            .setTitle("Willkommen!")
+            .setDescription(`👋 Hey ${member.user}, willkommen auf unserem Server!`)
+            .setThumbnail(member.user.displayAvatarURL());
+
+        channel.send({ embeds: [welcomeEmbed] });
+    }
   
   // Nickname automatisch setzen
   setImmediate(() => setNicknameBasedOnRole(member));
