@@ -209,7 +209,8 @@ client.on(Events.InteractionCreate, async interaction => {
 
   if (commandName === "sag") {
     const text = interaction.options.getString("text");
-    await interaction.deferReply(text);
+    await interaction.deferReply();
+    await interaction.editReply(text);
   }
 
   if (commandName === "clear") {
@@ -274,7 +275,8 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 
   if (commandName === "websites") {
-    await interaction.deferReply(`
+    await interaction.deferReply();
+    await interaction.editReply(`
 **🌐 Webseiten gegen Langeweile**
 - \`discord.com\` – Discord selbst 😄
 - \`google.com\` – Googeln geht immer!
