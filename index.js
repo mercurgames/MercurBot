@@ -46,10 +46,6 @@ client.once("ready", async () => {
       .setName("ping")
       .setDescription("Zeigt Pong!"),
 
-    // new SlashCommandBuilder()
-    //   .setName("slowcmd")
-    //   .setDescription("Nur zum Testen"),
-
     new SlashCommandBuilder()
       .setName("sag")
       .setDescription("Lässt den Bot etwas sagen")
@@ -244,7 +240,7 @@ client.on(Events.InteractionCreate, async interaction => {
                `- \`/sag <text>\` → Wiederholt den Text\n` +
                `- \`/clear <anzahl>\` → Löscht Nachrichten\n` +
                `- \`/setnick\` → Nickname anpassen\n` +
-              `Commands gemacht von <@1251600600164991099>\n`,
+              `Commands gemacht von <@1251600600164991099>`,
       ephemeral: true
     });
   }
