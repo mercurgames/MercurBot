@@ -234,15 +234,16 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 
   if (commandName === "help") {
-    await interaction.deferReply({
-      content: `📋 **Slash-Befehle Übersicht:**\n` +
-               `- \`/ping\` → Antwortet mit "Pong!"\n` +
-               `- \`/sag <text>\` → Wiederholt den Text\n` +
-               `- \`/clear <anzahl>\` → Löscht Nachrichten\n` +
-               `- \`/setnick\` → Nickname anpassen\n` +
-              `Commands gemacht von <@1251600600164991099>`,
-      ephemeral: true
-    });
+    await interaction.deferReply({ ephemeral: false }) 
+    await interaction.editReply({
+    content: `📋 **Slash-Befehle Übersicht:**\n` +
+        `- \`/ping\` → Antwortet mit "Pong!"\n` +
+        `- \`/sag <text>\` → Wiederholt den Text\n` +
+        `- \`/clear <anzahl>\` → Löscht Nachrichten\n` +
+        `- \`/setnick\` → Nickname anpassen\n` +
+        `Commands gemacht von <@1251600600164991099>`,
+});
+
   }
 
   if (commandName === "setnick") {
