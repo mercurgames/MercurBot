@@ -59,7 +59,11 @@ client.once("ready", async () => {
           .setDescription("Was soll der Bot sagen?")
           .setRequired(true)
       ),
-
+		
+    new SlashCommandBuilder()
+    	.setName("help")
+      .setDescription("Zeigt alle Slash Commands"),
+    
     new SlashCommandBuilder()
       .setName("clear")
       .setDescription("Löscht Nachrichten")
