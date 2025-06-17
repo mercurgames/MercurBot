@@ -61,7 +61,7 @@ client.once("ready", async () => {
       ),
 		
     new SlashCommandBuilder()
-    	.setName("help")
+      .setName("help")
       .setDescription("Zeigt alle Slash Commands"),
     
     new SlashCommandBuilder()
