@@ -262,7 +262,7 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 
   if (commandName === "weck") {
-    const allowedRoles = ["Admin", "Moderator", "Wecker"]; // Erlaubte Rollen
+    const allowedRoles = ["ADMIN", "Moderator", "Wecker"]; // Erlaubte Rollen
     const memberRoles = interaction.member.roles.cache.map(role => role.name);
 
     // Prüfen, ob der Nutzer eine erlaubte Rolle hat
