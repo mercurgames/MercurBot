@@ -262,18 +262,26 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 
   if (commandName === "weck") {
+    const allowedRoles = ["Admin", "Moderator", "Wecker"]; // Erlaubte Rollen
+    const memberRoles = interaction.member.roles.cache.map(role => role.name);
+
+    // Prüfen, ob der Nutzer eine erlaubte Rolle hat
+    if (!allowedRoles.some(role => memberRoles.includes(role))) {
+        return interaction.reply({ content: "🚫 Du hast keine Berechtigung, diesen Befehl zu nutzen.", ephemeral: true });
+    }
+
     await interaction.deferReply();
     const user = interaction.options.getUser("user");
     const anzahl = interaction.options.getInteger("anzahl");
 
     for (let i = 0; i < anzahl; i++) {
-      await interaction.channel.send(`${user} AUFWACHEN! ☀️`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
+        await interaction.channel.send(`${user} AUFWACHEN! ☀️`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     await interaction.editReply(`✅ ${user} wurde ${anzahl} Mal geweckt!`);
-  }
+}
+
 
   if (commandName === "websites") {
     await interaction.deferReply();
