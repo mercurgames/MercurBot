@@ -144,7 +144,7 @@ client.on(Events.GuildMemberAdd, async member => {
   }
 
   //const channel = member.guild.channels.cache.get("1382401900313448449"); // Kanal-ID einfügen
-    const channelIDs = ["1382401900313448449", "1381259431555239966", "1375181656993824939", "1383405232461054034", "1383468222002626660"]; // Füge hier weitere Kanal-IDs hinzu
+    const channelIDs = ["1382401900313448449", "1381259431555239966", "1375181656993824939", "1383405232461054034", "1383468222002626660", "1384965756286144754"]; // Füge hier weitere Kanal-IDs hinzu
 
     for (const channelID of channelIDs) {
         const channel = member.guild.channels.cache.get(channelID);
