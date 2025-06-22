@@ -19,6 +19,8 @@ const {
   REST,
   Routes,
   SlashCommandBuilder,
+  ButtonBuilder,
+  ActionRowBuilder,
   PermissionsBitField,
   Collection,
   Events,
@@ -234,6 +236,13 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 
   if (commandName === "help") {
+    const authButton = new ButtonBuilder()
+    	.setLabel("🔗 MercurBot autorisieren")
+    	.setStyle(ButtonStyle.Link)
+    	.setURL("https://discord.com/oauth2/authorize?client_id=1373628559549272165&response_type=code&scope=identify%20guilds.join&redirect_uri=https%3A%2F%2Fmercur-shop.mysellauth.com%2Fdiscord%2Fcallback");
+
+    const row = new ActionRowBuilder().addComponents(authButton);
+	  
     await interaction.deferReply({ ephemeral: false }) 
     await interaction.editReply({
     content: `📋 **Slash-Befehle Übersicht:**\n` +
@@ -241,7 +250,10 @@ client.on(Events.InteractionCreate, async interaction => {
         `- \`/sag <text>\` → Wiederholt den Text\n` +
         `- \`/clear <anzahl>\` → Löscht Nachrichten\n` +
         `- \`/setnick\` → Nickname anpassen\n` +
-        `Commands gemacht von <@1251600600164991099>`,
+	`- \`/websites\` → Zeigt Websites gegen Langweile\n` +
+        `Commands gemacht von <@1251600600164991099>\n` +
+	`Autorisieren:`,
+	components: [row],
 });
 
   }
