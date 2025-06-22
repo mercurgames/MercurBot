@@ -364,9 +364,9 @@ app.get("/discord/callback", async (req, res) => {
   const code = req.query.code;
 
   try {
-    // Schritt 1: Access Token anfordern
+    // 1. Token tauschen
     const tokenRes = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
-      client_id: '1384855681160577044',
+      client_id: '1373628559549272165',
       client_secret: process.env.DISCORD_CLIENT_SECRET,
       grant_type: 'authorization_code',
       code: code,
@@ -378,14 +378,14 @@ app.get("/discord/callback", async (req, res) => {
 
     const accessToken = tokenRes.data.access_token;
 
-    // Schritt 2: Nutzer-ID ermitteln
+    // 2. Nutzerinformationen abrufen
     const userRes = await axios.get('https://discord.com/api/users/@me', {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
 
     const userId = userRes.data.id;
 
-    // Schritt 3: Nutzer zum Server hinzufügen
+    // 3. Nutzer dem Server hinzufügen
     await axios.put(`https://discord.com/api/guilds/1382397412559290519/members/${userId}`, {
       access_token: accessToken
     }, {
@@ -395,10 +395,10 @@ app.get("/discord/callback", async (req, res) => {
       }
     });
 
-    res.send("✅ Willkommen auf dem Server!");
+    res.send("✅ Du wurdest erfolgreich auf den Discord-Server hinzugefügt!");
   } catch (err) {
-    console.error("❌ Fehler im OAuth2-Flow:", err.response?.data || err.message);
-    res.status(500).send("Fehler beim Hinzufügen zum Server.");
+    console.error("❌ Fehler beim Hinzufügen:", err.response?.data || err.message);
+    res.status(500).send("Ein Fehler ist aufgetreten.");
   }
 });
 
