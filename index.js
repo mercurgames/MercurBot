@@ -386,7 +386,7 @@ app.get("/discord/callback", async (req, res) => {
     const userId = userRes.data.id;
 
     // Schritt 3: Nutzer zum Server hinzufügen
-    await axios.put(`https://discord.com/api/guilds/DEIN_SERVER_ID/members/${userId}`, {
+    await axios.put(`https://discord.com/api/guilds/1382397412559290519/members/${userId}`, {
       access_token: accessToken
     }, {
       headers: {
