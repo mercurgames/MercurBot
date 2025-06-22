@@ -359,4 +359,49 @@ client.on("messageCreate", async (message) => {
   }
 })
 
+app.get("/discord/callback", async (req, res) => {
+  const axios = require("axios");
+  const code = req.query.code;
+
+  try {
+    // Schritt 1: Access Token anfordern
+    const tokenRes = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
+      client_id: '1384855681160577044',
+      client_secret: process.env.DISCORD_CLIENT_SECRET,
+      grant_type: 'authorization_code',
+      code: code,
+      redirect_uri: 'https://mercur-shop.mysellauth.com/discord/callback',
+      scope: 'identify guilds.join'
+    }), {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+
+    const accessToken = tokenRes.data.access_token;
+
+    // Schritt 2: Nutzer-ID ermitteln
+    const userRes = await axios.get('https://discord.com/api/users/@me', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+
+    const userId = userRes.data.id;
+
+    // Schritt 3: Nutzer zum Server hinzufügen
+    await axios.put(`https://discord.com/api/guilds/DEIN_SERVER_ID/members/${userId}`, {
+      access_token: accessToken
+    }, {
+      headers: {
+        Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    res.send("✅ Willkommen auf dem Server!");
+  } catch (err) {
+    console.error("❌ Fehler im OAuth2-Flow:", err.response?.data || err.message);
+    res.status(500).send("Fehler beim Hinzufügen zum Server.");
+  }
+});
+
+
+
 client.login(process.env.DISCORD_TOKEN);
