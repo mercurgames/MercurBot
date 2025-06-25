@@ -20,6 +20,7 @@ const {
   Routes,
   SlashCommandBuilder,
   ButtonBuilder,
+  ButtonStyle,
   ActionRowBuilder,
   PermissionsBitField,
   Collection,
