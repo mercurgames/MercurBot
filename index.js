@@ -243,7 +243,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     const row = new ActionRowBuilder().addComponents(authButton);
 	  
-    await interaction.deferReply({ ephemeral: false }) 
+    await interaction.deferReply({ ephemeral: false });
     await interaction.editReply({
     content: `📋 **Slash-Befehle Übersicht:**\n` +
         `- \`/ping\` → Antwortet mit "Pong!"\n` +
