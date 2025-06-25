@@ -240,7 +240,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const authButton = new ButtonBuilder()
     	.setLabel("🔗 MercurBot autorisieren")
     	.setStyle(ButtonStyle.Link)
-    	.setURL("https://discord.com/oauth2/authorize?client_id=1373628559549272165&response_type=code&scope=identify%20guilds.join&redirect_uri=https%3A%2F%2Fmercur-shop.mysellauth.com%2Fdiscord%2Fcallback");
+    	.setURL("https://discord.com/oauth2/authorize?client_id=1373628559549272165&response_type=code&redirect_uri=https%3A%2F%2Fgoogle.com&scope=identify+guilds.join");
 
     const row = new ActionRowBuilder().addComponents(authButton);
 	  
