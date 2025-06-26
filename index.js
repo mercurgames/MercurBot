@@ -323,10 +323,10 @@ if (interaction.commandName === "unlock") {
 
     try {
         await channel.permissionOverwrites.edit(everyoneRole, {
-            SendMessages: true,
-            SendMessagesInThreads: true,
-            CreatePublicThreads: true,
-            CreatePrivateThreads: true,
+            SendMessages: null,
+            SendMessagesInThreads: null,
+            CreatePublicThreads: null,
+            CreatePrivateThreads: null,
         });
 
         await interaction.reply({ content: "🔓 Kanal wurde erfolgreich für @everyone freigegeben.", ephemeral: true });
