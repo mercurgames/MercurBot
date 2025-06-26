@@ -50,6 +50,18 @@ client.once("ready", async () => {
       .setDescription("Zeigt Pong!"),
 
     new SlashCommandBuilder()
+      .setName("new")
+      .setDescription("Im Namen wird gesagt, das es was Neues gibt"),
+
+    new SlashCommandBuilder()
+      .setName("lock")
+      .setDescription("Im Kanal werden keine Nachrichten verschickt"),
+
+    new SlashCommandBuilder()
+      .setName("unlock")
+      .setDescription("Im Kanal können Nachrichten verschickt werden"),
+	  
+    new SlashCommandBuilder()
       .setName("sag")
       .setDescription("Lässt den Bot etwas sagen")
       .addStringOption(option =>
@@ -236,6 +248,83 @@ client.on(Events.InteractionCreate, async interaction => {
     }
   }
 
+if (interaction.commandName === "new") {
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+        return interaction.reply({
+            content: "🚫 Du brauchst die Berechtigung **Kanal verwalten**, um diesen Befehl zu nutzen.",
+            ephemeral: true
+        });
+    }
+
+    const channel = interaction.channel;
+
+    if (channel.name.startsWith("❗new❗")) {
+        return interaction.reply({ content: "❗ Der Kanal ist bereits markiert.", ephemeral: true });
+    }
+
+    try {
+        const newName = `❗new❗${channel.name}`;
+        await channel.setName(newName);
+        await interaction.reply({ content: `✅ Kanal wurde umbenannt zu **${newName}**.`, ephemeral: true });
+    } catch (error) {
+        console.error(error);
+        await interaction.reply({ content: "❌ Fehler beim Umbenennen des Kanals.", ephemeral: true });
+    }
+}
+
+if (interaction.commandName === "lock") {
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+        return interaction.reply({
+            content: "🚫 Du brauchst die Berechtigung **Kanal verwalten**, um diesen Befehl zu nutzen.",
+            ephemeral: true
+        });
+    }
+
+    const channel = interaction.channel;
+    const everyoneRole = interaction.guild.roles.everyone;
+
+    try {
+        await channel.permissionOverwrites.edit(everyoneRole, {
+            SendMessages: false,
+            SendMessagesInThreads: false,
+            CreatePublicThreads: false,
+            CreatePrivateThreads: false,
+        });
+
+        await interaction.reply({ content: "🔒 Kanal wurde erfolgreich für @everyone gesperrt.", ephemeral: true });
+    } catch (error) {
+        console.error(error);
+        await interaction.reply({ content: "❌ Fehler beim Sperren des Kanals.", ephemeral: true });
+    }
+}
+
+if (interaction.commandName === "unlock") {
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+        return interaction.reply({
+            content: "🚫 Du brauchst die Berechtigung **Kanal verwalten**, um diesen Befehl zu nutzen.",
+            ephemeral: true
+        });
+    }
+
+    const channel = interaction.channel;
+    const everyoneRole = interaction.guild.roles.everyone;
+
+    try {
+        await channel.permissionOverwrites.edit(everyoneRole, {
+            SendMessages: true,
+            SendMessagesInThreads: true,
+            CreatePublicThreads: true,
+            CreatePrivateThreads: true,
+        });
+
+        await interaction.reply({ content: "🔓 Kanal wurde erfolgreich für @everyone freigegeben.", ephemeral: true });
+    } catch (error) {
+        console.error(error);
+        await interaction.reply({ content: "❌ Fehler beim Freigeben des Kanals.", ephemeral: true });
+    }
+}
+
+	
   if (commandName === "help") {
     const authButton = new ButtonBuilder()
     	.setLabel("🔗 MercurBot autorisieren")
