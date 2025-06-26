@@ -257,20 +257,32 @@ if (interaction.commandName === "new") {
     }
 
     const channel = interaction.channel;
+    const prefix = "❗new❗";
 
-    if (channel.name.startsWith("❗new❗")) {
-        return interaction.reply({ content: "❗ Der Kanal ist bereits markiert.", ephemeral: true });
+    let newName;
+    if (channel.name.startsWith(prefix)) {
+        // Entferne das Präfix
+        newName = channel.name.slice(prefix.length);
+    } else {
+        // Füge das Präfix hinzu
+        newName = `${prefix}${channel.name}`;
     }
 
     try {
-        const newName = `❗new❗${channel.name}`;
         await channel.setName(newName);
-        await interaction.reply({ content: `✅ Kanal wurde umbenannt zu **${newName}**.`, ephemeral: true });
+        await interaction.reply({
+            content: `✅ Kanalname wurde geändert zu **${newName}**.`,
+            ephemeral: true
+        });
     } catch (error) {
         console.error(error);
-        await interaction.reply({ content: "❌ Fehler beim Umbenennen des Kanals.", ephemeral: true });
+        await interaction.reply({
+            content: "❌ Fehler beim Ändern des Kanalnamens.",
+            ephemeral: true
+        });
     }
 }
+
 
 if (interaction.commandName === "lock") {
     if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
