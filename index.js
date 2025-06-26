@@ -269,17 +269,14 @@ if (interaction.commandName === "new") {
     }
 
     try {
+        await interaction.deferReply({ ephemeral: true }); // Interaktion sichern
         await channel.setName(newName);
-        await interaction.reply({
-            content: `✅ Kanalname wurde geändert zu **${newName}**.`,
-            ephemeral: true
-        });
+        await interaction.editReply(`✅ Kanalname wurde geändert zu **${newName}**.`);
     } catch (error) {
         console.error(error);
-        await interaction.reply({
-            content: "❌ Fehler beim Ändern des Kanalnamens.",
-            ephemeral: true
-        });
+        if (!interaction.replied) {
+            await interaction.editReply("❌ Fehler beim Ändern des Kanalnamens.");
+        }
     }
 }
 
