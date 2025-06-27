@@ -300,7 +300,7 @@ if (interaction.commandName === "lock") {
             CreatePrivateThreads: false,
         });
 
-        await interaction.reply({ content: "🔒 Kanal wurde erfolgreich für @everyone gesperrt.", ephemeral: true });
+        await interaction.reply({ content: "🔒 Kanal wurde erfolgreich für @everyone gesperrt.", ephemeral: false });
     } catch (error) {
         console.error(error);
         await interaction.reply({ content: "❌ Fehler beim Sperren des Kanals.", ephemeral: true });
@@ -326,7 +326,7 @@ if (interaction.commandName === "unlock") {
             CreatePrivateThreads: null,
         });
 
-        await interaction.reply({ content: "🔓 Kanal wurde erfolgreich für @everyone freigegeben.", ephemeral: true });
+        await interaction.reply({ content: "🔓 Kanal wurde erfolgreich für @everyone freigegeben.", ephemeral: false });
     } catch (error) {
         console.error(error);
         await interaction.reply({ content: "❌ Fehler beim Freigeben des Kanals.", ephemeral: true });
