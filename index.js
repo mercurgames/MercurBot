@@ -84,6 +84,21 @@ client.once("ready", async () => {
           .setDescription("Anzahl der Nachrichten (1-100)")
           .setRequired(true)
       ),
+      new SlashCommandBuilder()
+ 			 .setName("dm")
+  .setDescription("Sendet einem User eine DM")
+  .addUserOption(option =>
+    option
+      .setName("user")
+      .setDescription("Wem soll ich schreiben?")
+      .setRequired(true)
+  )
+  .addStringOption(option =>
+    option
+      .setName("nachricht")
+      .setDescription("Was soll ich sagen?")
+      .setRequired(true)
+  ),
 
     new SlashCommandBuilder()
       .setName("weck")
@@ -305,6 +320,30 @@ if (interaction.commandName === "lock") {
         console.error(error);
         await interaction.reply({ content: "❌ Fehler beim Sperren des Kanals.", ephemeral: true });
     }
+}
+
+if (commandName === "dm") {
+  const erlaubteUser = [
+    "1251600600164991099" // deine eigene ID z. B.
+  ];
+
+  if (!erlaubteUser.includes(interaction.user.id)) {
+    return interaction.reply({
+      content: "🚫 Du darfst diesen Befehl nicht verwenden.",
+      ephemeral: true
+    });
+  }
+
+  const targetUser = interaction.options.getUser("user");
+  const message = interaction.options.getString("nachricht");
+
+  try {
+    await targetUser.send(`${message}`);
+    await interaction.reply({ content: "✅ DM wurde gesendet.", ephemeral: true });
+  } catch (error) {
+    console.error("DM-Fehler:", error);
+    await interaction.reply({ content: "❌ Konnte keine DM senden. Hat der User DMs deaktiviert?", ephemeral: true });
+  }
 }
 
 if (interaction.commandName === "unlock") {
