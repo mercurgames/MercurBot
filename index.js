@@ -70,6 +70,16 @@ client.once("ready", async () => {
           .setDescription("Was soll der Bot sagen?")
           .setRequired(true)
       ),
+
+	new SlashCommandBuilder()
+ 	 .setName("mentionrole")
+ 	 .setDescription("Erwähnt eine Rolle ohne Benachrichtigung")
+ 	 .addRoleOption(option =>
+ 	   option.setName("rolle")
+ 	     .setDescription("Welche Rolle soll erwähnt werden?")
+  	    .setRequired(true)
+  	)
+
 		
     new SlashCommandBuilder()
       .setName("help")
@@ -261,6 +271,33 @@ client.on(Events.InteractionCreate, async interaction => {
     await interaction.editReply(text);
   }
 
+if (interaction.commandName === "mentionrole") {
+    const role = interaction.options.getRole("rolle");
+
+    // Berechtigung prüfen (optional)
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.SendMessages)) {
+        return interaction.reply({
+            content: "🚫 Du darfst keine Nachrichten senden.",
+            ephemeral: true
+        });
+    }
+
+    try {
+        await interaction.deferReply({
+            content: `<@&${role.id}>`,
+            allowedMentions: { roles: [] }, // verhindert Ping
+            ephemeral: false
+        });
+    } catch (error) {
+        console.error("❌ Fehler beim Erwähnen der Rolle:", error);
+        await interaction.reply({
+            content: "❌ Konnte die Rolle nicht erwähnen.",
+            ephemeral: true
+        });
+    }
+}
+
+	
   if (commandName === "clear") {
     const amount = interaction.options.getInteger("anzahl");
 
