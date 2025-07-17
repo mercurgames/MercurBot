@@ -206,17 +206,32 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
 
 
 async function setNicknameBasedOnRole(member) {
-  const highestRole = member.roles.highest;
-  if (highestRole.name === '@everyone' || highestRole.name === 'Member' || highestRole.name === '✅Verified') return;
+    // Höchste sichtbare Rolle ermitteln
+    const highestRole = member.roles.highest;
 
-  const newNick = `${highestRole.name} | ${member.user.username}`;
-  try {
-    await member.setNickname(newNick);
-    console.log(`Nickname für ${member.user.tag} gesetzt: ${newNick}`);
-  } catch (error) {
-    console.log(`❌ Fehler beim Setzen des Nicknames für ${member.user.tag}:`, error.message);
-  }
+    // Sicherheits-Checks
+    if (!highestRole || highestRole.name === '@everyone' || highestRole.name === 'Member' || highestRole.name.includes("Verified") ) return;
+
+    // Anzeigenamen statt globalem Namen
+    const displayName = member.displayName;
+
+    // Rollennamen filtern
+    const rawRoleName = highestRole.name;
+    const delimiterMatch = rawRoleName.lastIndexOf('|') !== -1
+        ? rawRoleName.lastIndexOf('|')
+        : rawRoleName.lastIndexOf('┃');
+
+    const cleanedRoleName = delimiterMatch !== -1
+        ? rawRoleName.slice(delimiterMatch + 1).trim() // Schneidet z. B. 🎈 | Mod zu → "Mod"
+        : rawRoleName;
+
+    const newNick = `${cleanedRoleName} | ${displayName}`.slice(0, 32); // Max. 32 Zeichen
+
+    member.setNickname(newNick).catch(err => {
+        console.error(`❌ Fehler beim Setzen des Nicknamens für ${member.user.tag}:`, err.message);
+    });
 }
+
 
 client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
