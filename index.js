@@ -78,7 +78,7 @@ client.once("ready", async () => {
  	   option.setName("rolle")
  	     .setDescription("Welche Rolle soll erwähnt werden?")
   	    .setRequired(true)
-  	)
+  	),
 
 		
     new SlashCommandBuilder()
