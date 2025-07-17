@@ -208,30 +208,32 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
 async function setNicknameBasedOnRole(member) {
     const displayName = member.displayName;
 
-    // Filtere Rollen mit sinnvollen Namen
-    const cleanRoles = member.roles.cache
-        .filter(role => role.name !== '@everyone')
-	.filter(role => role.name !== 'Member')
-        .filter(role => role.name !== displayName)
-        .sort((a, b) => b.position - a.position);
+    // Filtere sinnvolle Rollen
+    const role = member.roles.cache
+        .filter(r => r.name !== '@everyone')
+        .sort((a, b) => b.position - a.position)
+        .find(r => r.name !== displayName); // vermeide Rollen, die gleich sind wie Name
 
-    if (cleanRoles.size === 0) return;
+    if (!role) return;
 
-    const rawRoleName = cleanRoles.first().name;
-
-    // Regex: Entfernt Emojis, Symbole & Trennzeichen
-    const simplifiedRole = rawRoleName
-        .split(/[\|┃➤«»▪・>]/)        // Aufteilen bei Symbolen
+    // Entferne Emojis & Trennzeichen
+    const raw = role.name;
+    const cleaned = raw
+        .split(/[\|┃➤«»▪・>]/)
         .map(part => part.trim())
-        .find(part => part.length > 2); // Suche den ersten sinnvollen Teil
+        .find(part => part.length > 2); // z.B. "Mod" aus "🎮 | Mod"
 
-    const fallbackRole = simplifiedRole || rawRoleName;
-    const newNick = `${fallbackRole} | ${displayName}`.slice(0, 32);
+    const roleName = cleaned || raw;
 
-    member.setNickname(newNick).catch(err => {
-        console.error(`❌ Fehler beim Setzen des Nicknames für ${member.user.tag}:`, err.message);
+    // Falls der Name den Rollennamen schon enthält → nicht anhängen
+    const containsRole = displayName.toLowerCase().includes(roleName.toLowerCase());
+    const finalNick = containsRole ? displayName : `${roleName} | ${displayName}`;
+
+    member.setNickname(finalNick.slice(0, 32)).catch(err => {
+        console.error(`❌ Fehler beim Nickname-Setzen für ${member.user.tag}:`, err.message);
     });
 }
+
 
 
 client.on(Events.InteractionCreate, async interaction => {
