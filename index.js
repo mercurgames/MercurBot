@@ -206,29 +206,30 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
 
 
 async function setNicknameBasedOnRole(member) {
-    // Höchste sichtbare Rolle ermitteln
-    const highestRole = member.roles.highest;
-
-    // Sicherheits-Checks
-    if (!highestRole || highestRole.name === '@everyone' || highestRole.name === 'Member' || highestRole.name.includes("Verified") ) return;
-
-    // Anzeigenamen statt globalem Namen
     const displayName = member.displayName;
 
-    // Rollennamen filtern
-    const rawRoleName = highestRole.name;
-    const delimiterMatch = rawRoleName.lastIndexOf('|') !== -1
-        ? rawRoleName.lastIndexOf('|')
-        : rawRoleName.lastIndexOf('┃');
+    // Filtere Rollen mit sinnvollen Namen
+    const cleanRoles = member.roles.cache
+        .filter(role => role.name !== '@everyone')
+	.filter(role => role.name !== 'Member')
+        .filter(role => role.name !== displayName)
+        .sort((a, b) => b.position - a.position);
 
-    const cleanedRoleName = delimiterMatch !== -1
-        ? rawRoleName.slice(delimiterMatch + 1).trim() // Schneidet z. B. 🎈 | Mod zu → "Mod"
-        : rawRoleName;
+    if (cleanRoles.size === 0) return;
 
-    const newNick = `${cleanedRoleName} | ${displayName}`.slice(0, 32); // Max. 32 Zeichen
+    const rawRoleName = cleanRoles.first().name;
+
+    // Regex: Entfernt Emojis, Symbole & Trennzeichen
+    const simplifiedRole = rawRoleName
+        .split(/[\|┃➤«»▪・>]/)        // Aufteilen bei Symbolen
+        .map(part => part.trim())
+        .find(part => part.length > 2); // Suche den ersten sinnvollen Teil
+
+    const fallbackRole = simplifiedRole || rawRoleName;
+    const newNick = `${fallbackRole} | ${displayName}`.slice(0, 32);
 
     member.setNickname(newNick).catch(err => {
-        console.error(`❌ Fehler beim Setzen des Nicknamens für ${member.user.tag}:`, err.message);
+        console.error(`❌ Fehler beim Setzen des Nicknames für ${member.user.tag}:`, err.message);
     });
 }
 
