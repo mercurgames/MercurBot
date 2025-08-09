@@ -152,7 +152,7 @@ client.once("ready", async () => {
 });
 
 client.on(Events.GuildMemberRemove, async member => {
-    const channelIDs = ["1382686427858341898", "1387129688962629756", "1394390181812899881", "1403343107537244286"]; // Liste der IDs
+    const channelIDs = ["1382686427858341898", "1387129688962629756", "1394390181812899881", "1403343107537244286", "1403416086249996507"]; // Liste der IDs
 
     for (const channelID of channelIDs) {
         const channel = member.guild.channels.cache.get(channelID);
@@ -184,7 +184,7 @@ client.on(Events.GuildMemberAdd, async member => {
   }
 
   //const channel = member.guild.channels.cache.get("1382401900313448449"); // Kanal-ID einfügen
-    const channelIDs = ["1382401900313448449", "1403343107537244285","1381259431555239966", "1375181656993824939", "1383405232461054034", "1383468222002626660", "1384965756286144754", "1387129646197244034", "1376163763060867155", "1394390128692039700"]; // Füge hier weitere Kanal-IDs hinzu
+    const channelIDs = ["1382401900313448449", "1403416086249996507", "1403343107537244285","1381259431555239966", "1375181656993824939", "1383405232461054034", "1383468222002626660", "1384965756286144754", "1387129646197244034", "1376163763060867155", "1394390128692039700"]; // Füge hier weitere Kanal-IDs hinzu
 
     for (const channelID of channelIDs) {
         const channel = member.guild.channels.cache.get(channelID);
