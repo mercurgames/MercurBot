@@ -72,6 +72,27 @@ client.once("ready", async () => {
       ),
 
 	new SlashCommandBuilder()
+  .setName("webhookmsg")
+  .setDescription("Sendet eine Nachricht über einen Webhook")
+  .addStringOption(option =>
+    option.setName("nachricht")
+      .setDescription("Was soll gesendet werden?")
+      .setRequired(true)
+  )
+  .addStringOption(option =>
+    option.setName("avatar")
+      .setDescription("Avatar-URL (optional)")
+      .setRequired(false)
+  )
+  .addStringOption(option =>
+    option.setName("name")
+      .setDescription("Profilname (optional)")
+      .setRequired(false)
+  ),
+
+	  
+
+	new SlashCommandBuilder()
  	 .setName("mentionrole")
  	 .setDescription("Erwähnt eine Rolle ohne Benachrichtigung")
  	 .addRoleOption(option =>
@@ -270,6 +291,56 @@ client.on(Events.InteractionCreate, async interaction => {
     await interaction.deferReply();
     await interaction.editReply(text);
   }
+
+	if (interaction.commandName === "webhookmsg") {
+    const nachricht = interaction.options.getString("nachricht");
+    const avatar = interaction.options.getString("avatar") || undefined;
+    const name = interaction.options.getString("name") || undefined;
+
+    const channel = interaction.channel;
+
+    // Webhook suchen
+    let webhook = (await channel.fetchWebhooks())
+        .find(hook => hook.name.toLowerCase().includes("merkurhook"));
+
+    // Falls keiner existiert → erstelle einen
+    if (!webhook) {
+        try {
+            webhook = await channel.createWebhook({
+                name: "MerkurHook",
+                avatar: interaction.client.user.displayAvatarURL()
+            });
+        } catch (err) {
+            console.error("❌ Fehler beim Erstellen des Webhooks:", err);
+            return interaction.reply({
+                content: "🚫 Webhook konnte nicht erstellt werden.",
+                ephemeral: true
+            });
+        }
+    }
+
+    // Nachricht senden
+    try {
+        await webhook.send({
+            content: nachricht,
+            username: name || "MerkurBot",
+            avatarURL: avatar || interaction.client.user.displayAvatarURL()
+        });
+
+        await interaction.reply({
+            content: "✅ Nachricht wurde über den Webhook gesendet.",
+            ephemeral: true
+        });
+    } catch (error) {
+        console.error("❌ Fehler beim Senden über Webhook:", error);
+        await interaction.reply({
+            content: "❌ Fehler beim Webhook-Versand.",
+            ephemeral: true
+        });
+    }
+}
+
+
 
 if (interaction.commandName === "mentionrole") {
     const role = interaction.options.getRole("rolle");
