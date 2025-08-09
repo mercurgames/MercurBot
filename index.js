@@ -323,7 +323,7 @@ client.on(Events.InteractionCreate, async interaction => {
     try {
         await webhook.send({
             content: nachricht,
-            username: name || "MerkurBot",
+            username: name || "MerkurHook",
             avatarURL: avatar || interaction.client.user.displayAvatarURL()
         });
 
