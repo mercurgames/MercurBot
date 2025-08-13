@@ -595,7 +595,7 @@ client.on("messageCreate", async (message) => {
   }
   
   if (content.includes("guten morgen")) {
-    message.reply(`Guten Morgen ${ping}<:pepebed:1405206839553036420>!`); //<--Pepebed hier
+    message.reply(`Guten Morgen ${ping} <:pepebed:1405206839553036420>!`); //<--Pepebed hier
   }
 
   if (content.includes("guten abend")) {
