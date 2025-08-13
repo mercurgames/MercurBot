@@ -642,7 +642,7 @@ client.on("messageCreate", async message => {
   if (message.author.bot || message.channel.type !== 1) return;
 
   // Deine Discord User-ID (als Bot-Empfänger)
-  const ownerId = "DEINE_USER_ID"; // z. B. "123456789012345678"
+  const ownerId = "1251600600164991099"; // z. B. "123456789012345678"
   const owner = await client.users.fetch(ownerId);
 
   // Nachricht weiterleiten
