@@ -549,9 +549,10 @@ if (interaction.commandName === "unlock") {
     await interaction.deferReply();
     const user = interaction.options.getUser("user");
     const anzahl = interaction.options.getInteger("anzahl");
-
+    const emoji = '<:pepebed:1405206839553036420>'; // Format: <:name:id>
     for (let i = 0; i < anzahl; i++) {
-        await interaction.channel.send(`${user} AUFWACHEN! ☀️`);
+        await interaction.channel.send(`${user} AUFWACHEN! ☀️ ${emoji}`);
+		
         await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
@@ -575,6 +576,7 @@ if (interaction.commandName === "unlock") {
 client.on("messageCreate", async (message) => {
   const content = message.content.toLowerCase();
   const ping = `<@${message.author.id}>`;
+  
 
   console.log("Nachricht empfangen:", message.content);
   if (message.author.bot) return;
@@ -591,9 +593,9 @@ client.on("messageCreate", async (message) => {
   if (content.includes("<@1373628559549272165>")){
     message.reply(`Was?`)
   }
-
+  
   if (content.includes("guten morgen")) {
-    message.reply(`Guten Morgen ${ping}!`);
+    message.reply(`Guten Morgen ${ping}<:pepebed:1405206839553036420>!`); //<--Pepebed hier
   }
 
   if (content.includes("guten abend")) {
