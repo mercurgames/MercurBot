@@ -635,7 +635,21 @@ client.on("messageCreate", async (message) => {
       console.error("Fehler beim Reagieren:", error);
     }
   }
-})
+});
+
+client.on("messageCreate", async message => {
+  // Ignoriere Nachrichten von Bots oder Nachrichten außerhalb von DMs
+  if (message.author.bot || message.channel.type !== 1) return;
+
+  // Deine Discord User-ID (als Bot-Empfänger)
+  const ownerId = "DEINE_USER_ID"; // z. B. "123456789012345678"
+  const owner = await client.users.fetch(ownerId);
+
+  // Nachricht weiterleiten
+  owner.send(`📩 Neue DM von ${message.author.tag}:\n${message.content}`)
+    .catch(console.error);
+});
+
 
 app.get("/discord/callback", async (req, res) => {
   const axios = require("axios");
