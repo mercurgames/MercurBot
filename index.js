@@ -516,6 +516,7 @@ if (interaction.commandName === "unlock") {
         `- \`/sag <text>\` → Wiederholt den Text\n` +
         `- \`/clear <anzahl>\` → Löscht Nachrichten\n` +
         `- \`/setnick\` → Nickname anpassen\n` +
+        ˋ- \ˋ/webhookmsg\ˋ -> Sendet eine Nachricht über einen Webhook in diesem Kanal. Webhook wird automatisch erstellt \nˋ +
 	`- \`/websites\` → Zeigt Websites gegen Langweile\n` +
         `Commands gemacht von <@1251600600164991099>\n` +
 	`Autorisieren:`,
@@ -649,7 +650,7 @@ client.on("messageCreate", async message => {
 
   // Nachricht weiterleiten
 	try {
-  await owner.send(`📩 Neue DM von ${message.author.tag}:\n${message.content}`);
+  await owner.send(`📩 Neue DM von ${message.author.id}:\n${message.content}`);
   } catch(error) {
     console.error("Fehler beim Weiterleiten einer DM: ",error);
   }
