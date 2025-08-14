@@ -641,14 +641,17 @@ client.on("messageCreate", async (message) => {
 client.on("messageCreate", async message => {
   // Ignoriere Nachrichten von Bots oder Nachrichten außerhalb von DMs
   if (message.author.bot || message.channel.type !== ChannelType.DM) return;
-
+  console.log("Jemand hat mich dmt");
   // Deine Discord User-ID (als Bot-Empfänger)
   const ownerId = "1251600600164991099"; // z. B. "123456789012345678"
   const owner = await client.users.fetch(ownerId);
 
   // Nachricht weiterleiten
-  await owner.send(`📩 Neue DM von ${message.author.tag}:\n${message.content}`)
-    .catch(console.error);
+	try {
+  await owner.send(`📩 Neue DM von ${message.author.tag}:\n${message.content}`);
+  } catch(error) {
+    console.error("Fehler beim Weiterleiten einer DM: ",error);
+  }
 });
 
 
