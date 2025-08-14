@@ -516,7 +516,7 @@ if (interaction.commandName === "unlock") {
         `- \`/sag <text>\` → Wiederholt den Text\n` +
         `- \`/clear <anzahl>\` → Löscht Nachrichten\n` +
         `- \`/setnick\` → Nickname anpassen\n` +
-        ˋ- \ˋ/webhookmsg\ˋ -> Sendet eine Nachricht über einen Webhook in diesem Kanal. Webhook wird automatisch erstellt \nˋ +
+        `- \`/webhookmsg\` -> Sendet eine Nachricht über einen Webhook in diesem Kanal. Webhook wird automatisch erstellt \n` +
 	`- \`/websites\` → Zeigt Websites gegen Langweile\n` +
         `Commands gemacht von <@1251600600164991099>\n` +
 	`Autorisieren:`,
