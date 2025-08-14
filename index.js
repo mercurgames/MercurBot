@@ -52,6 +52,10 @@ client.once("ready", async () => {
       .setDescription("Zeigt Pong!"),
 
     new SlashCommandBuilder()
+	  .setName("partners")
+	  .setDescription("Zeigt alle Partner von mir an"),
+
+    new SlashCommandBuilder()
       .setName("new")
       .setDescription("Im Namen wird gesagt, das es was Neues gibt"),
 
@@ -273,7 +277,11 @@ client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   const { commandName } = interaction;
-
+  const partners = "discord.gg/RGmDsnuuva <-- Grow an ultra Garden \n " + 
+	  "discord.gg/NPJJTGeU5G <-- My Support Server \n " + 
+	  "discord.gg/XTkvTHvcyq <-- BS Clubs \n " + 
+	  "discord.gg/uA9sbBfTVq \n <--Robloxians \n" +
+	  "discord.gg/cHR9tMzVSX <--Mercur_Games Chillen";
   if (commandName === "ping") {
     await interaction.deferReply();
     await interaction.editReply("Pong!");
@@ -293,6 +301,11 @@ client.on(Events.InteractionCreate, async interaction => {
     await interaction.deferReply();
     await interaction.editReply(text);
   }
+
+	if(commandName === "partners") {
+		await interaction.deferReply();
+		await interaction.editReply(partners);
+	}
 
 	if (interaction.commandName === "webhookmsg") {
     const nachricht = interaction.options.getString("nachricht");
