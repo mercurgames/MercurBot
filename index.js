@@ -571,7 +571,7 @@ if (interaction.commandName === "unlock") {
 - \`google.com\` – Googeln geht immer!
 - \`poki.com\` – Spiele ohne Anmeldung
 - \`slither.io\` – Klassiker
-- \`evoworld.io\` – Mobile Game für zwischendurch
+- \`evoworld.io\` – Mobile Game für zwischendurch (Das hat ChatGPT geschrieben; eig. brauchst du 2 Stunden auf einmal und man kann es auch mobil spielen, aber nd handy)
 `);
   }
 });
@@ -650,7 +650,7 @@ client.on("messageCreate", async message => {
 
   // Nachricht weiterleiten
 	try {
-  await owner.send(`📩 Neue DM von ${message.author.id}:\n${message.content}`);
+  await owner.send(`📩 Neue DM von <@${message.author.id}>:\n${message.content}`);
   } catch(error) {
     console.error("Fehler beim Weiterleiten einer DM: ",error);
   }
